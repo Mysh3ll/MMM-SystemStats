@@ -12,7 +12,14 @@
 }
 
 .system-stats__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   opacity: 0.8;
+}
+
+.system-stats__icon {
+  opacity: 0.9;
 }
 
 .system-stats__value {

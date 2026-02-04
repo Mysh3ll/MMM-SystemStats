@@ -3,6 +3,8 @@ Module.register("MMM-SystemStats", {
     updateInterval: 5000,
     animationSpeed: 300,
     units: "metric",
+    showIcons: true,
+    iconSize: 14,
     maxBackoffFactor: 8,
     thresholds: {
       cpu: { warning: 60, critical: 85 },
@@ -188,13 +190,26 @@ Module.register("MMM-SystemStats", {
     return "ok";
   },
 
-  createRow(label, value, severity) {
+  createRow(iconName, label, value, severity) {
     const row = document.createElement("div");
     row.className = "system-stats__row";
 
     const labelEl = document.createElement("span");
     labelEl.className = "system-stats__label";
-    labelEl.textContent = label;
+    if (this.config.showIcons && iconName) {
+      const iconEl = document.createElement("img");
+      iconEl.className = "system-stats__icon";
+      iconEl.src = this.file(`public/icons/${iconName}.svg`);
+      iconEl.alt = "";
+      iconEl.width = this.config.iconSize;
+      iconEl.height = this.config.iconSize;
+      iconEl.setAttribute("aria-hidden", "true");
+      labelEl.appendChild(iconEl);
+    }
+
+    const labelText = document.createElement("span");
+    labelText.textContent = label;
+    labelEl.appendChild(labelText);
 
     const valueEl = document.createElement("span");
     valueEl.className = "system-stats__value";
@@ -226,6 +241,7 @@ Module.register("MMM-SystemStats", {
 
     wrapper.appendChild(
       this.createRow(
+        "cpu",
         this.translate("CPU_LABEL"),
         this.formatPercent(this.stats.cpuLoad),
         this.getSeverity("cpu", this.stats.cpuLoad)
@@ -233,6 +249,7 @@ Module.register("MMM-SystemStats", {
     );
     wrapper.appendChild(
       this.createRow(
+        "temp",
         this.translate("TEMP_LABEL"),
         this.formatTemperature(this.stats.cpuTemp),
         this.getSeverity("temp", this.stats.cpuTemp)
@@ -240,6 +257,7 @@ Module.register("MMM-SystemStats", {
     );
     wrapper.appendChild(
       this.createRow(
+        "ram",
         this.translate("RAM_LABEL"),
         this.formatPercent(this.stats.ramUsedPercent),
         this.getSeverity("ram", this.stats.ramUsedPercent)
@@ -247,13 +265,18 @@ Module.register("MMM-SystemStats", {
     );
     wrapper.appendChild(
       this.createRow(
+        "disk",
         this.translate("DISK_LABEL"),
         this.formatPercent(this.stats.diskUsedPercent),
         this.getSeverity("disk", this.stats.diskUsedPercent)
       )
     );
     wrapper.appendChild(
-      this.createRow(this.translate("UPTIME_LABEL"), this.formatUptime(this.stats.uptimeSeconds))
+      this.createRow(
+        "uptime",
+        this.translate("UPTIME_LABEL"),
+        this.formatUptime(this.stats.uptimeSeconds)
+      )
     );
     return wrapper;
   },

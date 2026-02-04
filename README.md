@@ -45,6 +45,8 @@ Add this block to `config/config.js`:
 
 - `updateInterval` (number): refresh interval in milliseconds.  
   Recommended default: `5000`.
+- `showIcons` (boolean): show local SVG icons next to metric labels. Default: `true`.
+- `iconSize` (number): icon size in pixels. Default: `14`.
 - `maxBackoffFactor` (number): max retry multiplier on repeated errors.  
   Example: with `updateInterval: 5000` and `maxBackoffFactor: 8`, retries can back off up to `40000ms`.
 - `thresholds` (object): warning/critical thresholds used for metric colors.
@@ -59,6 +61,8 @@ Example:
   position: "top_right",
   config: {
     updateInterval: 5000,
+    showIcons: true,
+    iconSize: 14,
     maxBackoffFactor: 8,
     thresholds: {
       cpu: { warning: 65, critical: 90 },
