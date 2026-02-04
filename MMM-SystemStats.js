@@ -3,6 +3,7 @@ Module.register("MMM-SystemStats", {
     updateInterval: 5000,
     animationSpeed: 300,
     units: "metric",
+    maxBackoffFactor: 8,
     thresholds: {
       cpu: { warning: 60, critical: 85 },
       temp: { warning: 65, critical: 80 },
@@ -15,6 +16,8 @@ Module.register("MMM-SystemStats", {
     this.stats = null;
     this.error = null;
     this.intervalHandle = null;
+    this.retryTimeout = null;
+    this.consecutiveErrors = 0;
     this.thresholds = this.normalizeThresholds(this.config.thresholds);
     this.requestStats();
     this.startScheduler();
@@ -51,6 +54,8 @@ Module.register("MMM-SystemStats", {
   },
 
   startScheduler() {
+    this.clearRetryTimeout();
+
     if (this.intervalHandle) {
       clearInterval(this.intervalHandle);
     }
@@ -64,15 +69,38 @@ Module.register("MMM-SystemStats", {
     this.sendSocketNotification("GET_STATS");
   },
 
+  clearRetryTimeout() {
+    if (this.retryTimeout) {
+      clearTimeout(this.retryTimeout);
+      this.retryTimeout = null;
+    }
+  },
+
+  scheduleRetry() {
+    this.clearRetryTimeout();
+    const exponent = Math.max(0, this.consecutiveErrors - 1);
+    const backoffFactor = Math.min(2 ** exponent, this.config.maxBackoffFactor);
+    const delay = this.config.updateInterval * backoffFactor;
+
+    this.retryTimeout = setTimeout(() => {
+      this.retryTimeout = null;
+      this.requestStats();
+    }, delay);
+  },
+
   socketNotificationReceived(notification, payload) {
     if (notification === "STATS_UPDATE") {
       if (!this.isValidStats(payload)) {
+        this.consecutiveErrors += 1;
         this.error = "Invalid metrics payload";
         this.stats = null;
+        this.scheduleRetry();
         this.updateDom(this.config.animationSpeed);
         return;
       }
 
+      this.consecutiveErrors = 0;
+      this.clearRetryTimeout();
       this.error = null;
       this.stats = payload;
       this.updateDom(this.config.animationSpeed);
@@ -80,8 +108,10 @@ Module.register("MMM-SystemStats", {
     }
 
     if (notification === "STATS_ERROR") {
+      this.consecutiveErrors += 1;
       this.error = payload?.message || "Unknown error";
       this.stats = null;
+      this.scheduleRetry();
       this.updateDom(this.config.animationSpeed);
     }
   },
@@ -233,6 +263,8 @@ Module.register("MMM-SystemStats", {
       clearInterval(this.intervalHandle);
       this.intervalHandle = null;
     }
+
+    this.clearRetryTimeout();
   },
 
   resume() {

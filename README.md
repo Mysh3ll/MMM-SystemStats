@@ -45,6 +45,8 @@ Add this block to `config/config.js`:
 
 - `updateInterval` (number): refresh interval in milliseconds.  
   Recommended default: `5000`.
+- `maxBackoffFactor` (number): max retry multiplier on repeated errors.  
+  Example: with `updateInterval: 5000` and `maxBackoffFactor: 8`, retries can back off up to `40000ms`.
 - `thresholds` (object): warning/critical thresholds used for metric colors.
   - `cpu`, `temp`, `ram`, `disk`
   - each metric supports `{ warning, critical }`
@@ -57,6 +59,7 @@ Example:
   position: "top_right",
   config: {
     updateInterval: 5000,
+    maxBackoffFactor: 8,
     thresholds: {
       cpu: { warning: 65, critical: 90 },
       temp: { warning: 70, critical: 85 },
