@@ -61,8 +61,9 @@ npm test
 ```text
 MMM-SystemStats/
 ├── MMM-SystemStats.js
+├── MMM-SystemStats.css
 ├── node_helper.js
-├── styles/main.css
+├── translations/
 ├── public/
 └── package.json
 ```
