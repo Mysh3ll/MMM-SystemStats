@@ -1,19 +1,41 @@
 {
   "name": "mmm-systemstats",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "Modern system statistics module for MagicMirror² (CPU, temperature, RAM, disk, uptime).",
+  "main": "MMM-SystemStats.js",
   "type": "commonjs",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "test": "npm run lint && npm run format:check"
+  },
+  "files": [
+    "MMM-SystemStats.js",
+    "node_helper.js",
+    "styles",
+    "public",
+    "README.md",
+    "AGENTS.md"
+  ],
+  "keywords": [
+    "magicmirror",
+    "magicmirror2",
+    "mmm-module",
+    "system-stats",
+    "raspberry-pi",
+    "systeminformation"
+  ],
+  "author": "mysh3ll",
+  "license": "MIT",
+  "private": true,
   "dependencies": {
     "systeminformation": "^5.30.7"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.39.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.1"
