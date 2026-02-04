@@ -15,8 +15,39 @@ Module.register("MMM-SystemStats", {
     this.stats = null;
     this.error = null;
     this.intervalHandle = null;
+    this.thresholds = this.normalizeThresholds(this.config.thresholds);
     this.requestStats();
     this.startScheduler();
+  },
+
+  normalizeThresholds(thresholds) {
+    const fallback = {
+      cpu: { warning: 60, critical: 85 },
+      temp: { warning: 65, critical: 80 },
+      ram: { warning: 70, critical: 90 },
+      disk: { warning: 80, critical: 95 },
+    };
+
+    const safeThresholds = thresholds && typeof thresholds === "object" ? thresholds : {};
+    const normalized = {};
+    const keys = Object.keys(fallback);
+
+    keys.forEach((key) => {
+      const fromConfig = safeThresholds[key] || {};
+      const warning = Number.isFinite(fromConfig.warning)
+        ? fromConfig.warning
+        : fallback[key].warning;
+      const critical = Number.isFinite(fromConfig.critical)
+        ? fromConfig.critical
+        : fallback[key].critical;
+
+      normalized[key] = {
+        warning,
+        critical: critical >= warning ? critical : warning,
+      };
+    });
+
+    return normalized;
   },
 
   startScheduler() {
@@ -111,7 +142,7 @@ Module.register("MMM-SystemStats", {
       return "neutral";
     }
 
-    const metricThresholds = this.config.thresholds?.[metricKey];
+    const metricThresholds = this.thresholds?.[metricKey];
     if (!metricThresholds) {
       return "neutral";
     }

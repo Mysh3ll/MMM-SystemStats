@@ -45,6 +45,27 @@ Add this block to `config/config.js`:
 
 - `updateInterval` (number): refresh interval in milliseconds.  
   Recommended default: `5000`.
+- `thresholds` (object): warning/critical thresholds used for metric colors.
+  - `cpu`, `temp`, `ram`, `disk`
+  - each metric supports `{ warning, critical }`
+
+Example:
+
+```js
+{
+  module: "MMM-SystemStats",
+  position: "top_right",
+  config: {
+    updateInterval: 5000,
+    thresholds: {
+      cpu: { warning: 65, critical: 90 },
+      temp: { warning: 70, critical: 85 },
+      ram: { warning: 75, critical: 92 },
+      disk: { warning: 85, critical: 96 }
+    }
+  }
+}
+```
 
 ## Development
 
