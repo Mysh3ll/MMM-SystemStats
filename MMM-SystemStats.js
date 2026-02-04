@@ -3,6 +3,12 @@ Module.register("MMM-SystemStats", {
     updateInterval: 5000,
     animationSpeed: 300,
     units: "metric",
+    thresholds: {
+      cpu: { warning: 60, critical: 85 },
+      temp: { warning: 65, critical: 80 },
+      ram: { warning: 70, critical: 90 },
+      disk: { warning: 80, critical: 95 },
+    },
   },
 
   start() {
@@ -100,7 +106,28 @@ Module.register("MMM-SystemStats", {
     return `${hours}h ${minutes}m`;
   },
 
-  createRow(label, value) {
+  getSeverity(metricKey, value) {
+    if (typeof value !== "number") {
+      return "neutral";
+    }
+
+    const metricThresholds = this.config.thresholds?.[metricKey];
+    if (!metricThresholds) {
+      return "neutral";
+    }
+
+    if (value >= metricThresholds.critical) {
+      return "critical";
+    }
+
+    if (value >= metricThresholds.warning) {
+      return "warning";
+    }
+
+    return "ok";
+  },
+
+  createRow(label, value, severity) {
     const row = document.createElement("div");
     row.className = "system-stats__row";
 
@@ -110,6 +137,9 @@ Module.register("MMM-SystemStats", {
 
     const valueEl = document.createElement("span");
     valueEl.className = "system-stats__value";
+    if (severity) {
+      valueEl.classList.add(`system-stats__value--${severity}`);
+    }
     valueEl.textContent = value;
 
     row.appendChild(labelEl);
@@ -134,16 +164,32 @@ Module.register("MMM-SystemStats", {
     }
 
     wrapper.appendChild(
-      this.createRow(this.translate("CPU_LABEL"), this.formatPercent(this.stats.cpuLoad))
+      this.createRow(
+        this.translate("CPU_LABEL"),
+        this.formatPercent(this.stats.cpuLoad),
+        this.getSeverity("cpu", this.stats.cpuLoad)
+      )
     );
     wrapper.appendChild(
-      this.createRow(this.translate("TEMP_LABEL"), this.formatTemperature(this.stats.cpuTemp))
+      this.createRow(
+        this.translate("TEMP_LABEL"),
+        this.formatTemperature(this.stats.cpuTemp),
+        this.getSeverity("temp", this.stats.cpuTemp)
+      )
     );
     wrapper.appendChild(
-      this.createRow(this.translate("RAM_LABEL"), this.formatPercent(this.stats.ramUsedPercent))
+      this.createRow(
+        this.translate("RAM_LABEL"),
+        this.formatPercent(this.stats.ramUsedPercent),
+        this.getSeverity("ram", this.stats.ramUsedPercent)
+      )
     );
     wrapper.appendChild(
-      this.createRow(this.translate("DISK_LABEL"), this.formatPercent(this.stats.diskUsedPercent))
+      this.createRow(
+        this.translate("DISK_LABEL"),
+        this.formatPercent(this.stats.diskUsedPercent),
+        this.getSeverity("disk", this.stats.diskUsedPercent)
+      )
     );
     wrapper.appendChild(
       this.createRow(this.translate("UPTIME_LABEL"), this.formatUptime(this.stats.uptimeSeconds))

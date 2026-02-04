@@ -19,6 +19,22 @@
   font-weight: 600;
 }
 
+.system-stats__value--neutral {
+  opacity: 0.85;
+}
+
+.system-stats__value--ok {
+  color: #77d3a5;
+}
+
+.system-stats__value--warning {
+  color: #ffd166;
+}
+
+.system-stats__value--critical {
+  color: #ff7f7f;
+}
+
 .system-stats--loading {
   opacity: 0.75;
 }
