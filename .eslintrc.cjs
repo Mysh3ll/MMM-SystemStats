@@ -10,6 +10,9 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "script",
   },
+  globals: {
+    Module: "readonly",
+  },
   ignorePatterns: ["node_modules/", "public/"],
   rules: {
     curly: ["error", "all"],

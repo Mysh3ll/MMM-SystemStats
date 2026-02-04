@@ -1,0 +1,28 @@
+.system-stats {
+  min-width: 220px;
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+.system-stats__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 2px 0;
+}
+
+.system-stats__label {
+  opacity: 0.8;
+}
+
+.system-stats__value {
+  font-weight: 600;
+}
+
+.system-stats--loading {
+  opacity: 0.75;
+}
+
+.system-stats--error {
+  color: #ff7f7f;
+}

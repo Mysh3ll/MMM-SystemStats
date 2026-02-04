@@ -1,0 +1,8 @@
+{
+  "LOADING": "Chargement des statistiques système...",
+  "CPU_LABEL": "CPU",
+  "TEMP_LABEL": "Temp",
+  "RAM_LABEL": "RAM",
+  "DISK_LABEL": "Disque",
+  "UPTIME_LABEL": "Actif"
+}

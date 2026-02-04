@@ -22,6 +22,9 @@ module.exports = [
       ecmaVersion: "latest",
       sourceType: "script",
     },
+    globals: {
+      Module: "readonly",
+    },
     rules: {
       curly: ["error", "all"],
       eqeqeq: ["error", "always"],

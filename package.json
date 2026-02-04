@@ -13,9 +13,10 @@
   },
   "files": [
     "MMM-SystemStats.js",
+    "MMM-SystemStats.css",
     "node_helper.js",
-    "styles",
     "public",
+    "translations",
     "README.md",
     "AGENTS.md"
   ],
