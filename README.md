@@ -6,7 +6,7 @@ Modern MagicMirror² module to display real-time system stats with low overhead,
 
 - CPU usage
 - CPU temperature
-- RAM usage
+- RAM pressure usage (`(total - available) / total`)
 - Disk usage
 - Uptime
 - Clean, readable UI (custom CSS)

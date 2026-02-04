@@ -22,7 +22,9 @@ module.exports = NodeHelper.create({
       return {
         cpuLoad: Number(cpuLoad.currentLoad.toFixed(1)),
         cpuTemp: safeTemp !== null ? Number(safeTemp.toFixed(1)) : null,
-        ramUsedPercent: Number(((memory.used / memory.total) * 100).toFixed(1)),
+        ramUsedPercent: Number(
+          (((memory.total - memory.available) / memory.total) * 100).toFixed(1)
+        ),
         diskUsedPercent:
           mainFs && typeof mainFs.use === "number" ? Number(mainFs.use.toFixed(1)) : null,
         uptimeSeconds: time.uptime,
