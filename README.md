@@ -43,8 +43,11 @@ Add this block to `config/config.js`:
 
 ## Options
 
-- `updateInterval` (number): refresh interval in milliseconds.  
-  Recommended default: `5000`.
+- `updateInterval` (number|string): refresh interval.
+  - number `>= 1000`: interpreted as milliseconds (`60000` = 60s)
+  - number `< 1000`: interpreted as seconds (`60` = 60s)
+  - string with suffix: `"60000ms"` or `"60s"`
+  - recommended default: `5000`
 - `showIcons` (boolean): show local SVG icons next to metric labels. Default: `true`.
 - `iconSize` (number): icon size in pixels. Default: `14`.
 - `maxBackoffFactor` (number): max retry multiplier on repeated errors.  

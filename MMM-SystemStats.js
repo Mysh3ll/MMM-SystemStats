@@ -20,9 +20,30 @@ Module.register("MMM-SystemStats", {
     this.intervalHandle = null;
     this.retryTimeout = null;
     this.consecutiveErrors = 0;
+    this.updateIntervalMs = this.resolveUpdateInterval(this.config.updateInterval);
     this.thresholds = this.normalizeThresholds(this.config.thresholds);
     this.requestStats();
     this.startScheduler();
+  },
+
+  resolveUpdateInterval(value) {
+    if (typeof value === "string") {
+      const trimmed = value.trim().toLowerCase();
+      if (trimmed.endsWith("ms")) {
+        const parsedMs = Number.parseFloat(trimmed.slice(0, -2));
+        return Number.isFinite(parsedMs) && parsedMs > 0 ? parsedMs : 5000;
+      }
+      if (trimmed.endsWith("s")) {
+        const parsedSeconds = Number.parseFloat(trimmed.slice(0, -1));
+        return Number.isFinite(parsedSeconds) && parsedSeconds > 0 ? parsedSeconds * 1000 : 5000;
+      }
+    }
+
+    if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+      return value < 1000 ? value * 1000 : value;
+    }
+
+    return 5000;
   },
 
   normalizeThresholds(thresholds) {
@@ -64,7 +85,7 @@ Module.register("MMM-SystemStats", {
 
     this.intervalHandle = setInterval(() => {
       this.requestStats();
-    }, this.config.updateInterval);
+    }, this.updateIntervalMs);
   },
 
   requestStats() {
@@ -82,7 +103,7 @@ Module.register("MMM-SystemStats", {
     this.clearRetryTimeout();
     const exponent = Math.max(0, this.consecutiveErrors - 1);
     const backoffFactor = Math.min(2 ** exponent, this.config.maxBackoffFactor);
-    const delay = this.config.updateInterval * backoffFactor;
+    const delay = this.updateIntervalMs * backoffFactor;
 
     this.retryTimeout = setTimeout(() => {
       this.retryTimeout = null;
